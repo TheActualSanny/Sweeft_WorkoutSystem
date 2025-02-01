@@ -1,0 +1,7 @@
+/venv
+db.sqlite3
+
+# In order to create the database with initial 20 excercises inserted already, we should 
+# ignore this migration so that the user can migrate instantly to write the records
+
+/workouts_main/migrations/0003_auto_20250201_1732.py
