@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <div class="container">
+        {% for workout in workouts %}
+            <div id = "workout-instance">
+                <h1><strong> {{ workout.workout_name }} </strong></h1>
+                <p><strong> Target Muscle: {{ workout.target_muscle }} </strong></p>
+                <p><strong> Workout Description: {{ workout.workout_description }} </strong></p>
+                <p><strong> Workout Instruction: {{ workout.workout_instruction }} </strong></p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
