@@ -52,14 +52,45 @@ class AddWorkoutExcercise(APIView):
             plan = user_plans.get(plan_name = plan_name) # This part will be written in the serializer
         except:
             plan = None
-        print(type(plan))
         if not plan:
             return Response({'message' : f'Plan {plan_name} doesnt exist!'})
         else:
-            WorkoutInstances.objects.create(workout_plan = plan, excercise = chosen_excercise,
+            WorkoutInstances.objects.create(user = request.user, workout_plan = plan, excercise = chosen_excercise,
                                             frequency = request.data.get('frequency'), repetitions = request.data.get('repetitions'),
                                             sets = request.data.get('sets'), duration = request.data.get('duration'),
                                             distance = request.data.get('distance'))
             return Response({'message' : 'Successfully added the new excercise!'})
         
-            
+class CustomizeWorkoutExcercise(APIView):
+    '''
+        This view will handle the modification of  excercises that the user added to the class.
+        For now, the user will pass in an id of the excercise that must be changed, and any new
+        field values.
+    '''
+    permission_classes = [IsAuthenticated, IsTokenValid]
+
+    def post(self, request):
+        '''
+            Considering that each plan will have a single instance of a workout, 
+            we simply get that workout excercise.
+            It will then parse the request.data and update passed values
+
+            This implementation makes it possible for the user to pass in any ammount of JSON key-value pairs
+            to modify the target excercise.
+        '''
+        data = request.data
+        target_excercise = DefinedWorkouts.objects.get(workout_name = data.get('target_excercise'))
+        try:
+            curr_instances = WorkoutInstances.objects.filter(user = request.user)
+            target = curr_instances.get(excercise = target_excercise)    
+            model_keys = [i.name for i in WorkoutInstances._meta.fields]
+            for param in data:
+                if param in model_keys:
+                    setattr(target, param, data[param])
+            target.save()
+            return Response({'message' : 'Successfully updated the excercise!'})
+        except Exception as err:
+            return Response({'message' : 'The workout that you passed doesnt exist, or you are unathorized'})
+        
+
+        

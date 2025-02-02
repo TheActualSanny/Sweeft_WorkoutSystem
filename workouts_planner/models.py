@@ -19,8 +19,9 @@ class WorkoutInstances(models.Model):
         but they will also have addition fields like duration, sets, repetitions, distance..
     '''
     workout_plan = models.ForeignKey(WorkoutPlans, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
     excercise = models.ForeignKey(DefinedWorkouts, on_delete = models.CASCADE)
-    frequency = models.IntegerField(null = True)
+    frequency = models.IntegerField(null = True) # This must be a WorkoutPlans field
     repetitions = models.IntegerField(null = True)
     sets = models.IntegerField(null = True)
     duration = models.IntegerField(null = True)
