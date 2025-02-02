@@ -1,6 +1,6 @@
 /venv
 db.sqlite3
-
+.env
 # In order to create the database with initial 20 excercises inserted already, we should 
 # ignore this migration so that the user can migrate instantly to write the records
 
