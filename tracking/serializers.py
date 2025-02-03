@@ -4,8 +4,12 @@ from rest_framework import serializers
 from workouts_main.models import DefinedWorkouts
 
 class TrackingSerializer(serializers.Serializer):
-    exercise = serializers.CharField()
-
+    excercise = serializers.CharField()
+    weight = serializers.IntegerField()
+    weight_objective = serializers.IntegerField()
+    goal = serializers.CharField()
+    achievement = serializers.CharField()
+    
     def validate(self, data):
         '''
             We check if the excercise that the user passed is into the defined excercises' table or not.
