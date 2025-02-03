@@ -7,9 +7,14 @@ class WorkoutSerializer(serializers.Serializer):
         The serializer that we will use in order to validate
         the data that the user sends in the post request.
     '''
+    plan_name = serializers.CharField() 
+    excercise = serializers.CharField()
+    frequency = serializers.IntegerField()
+    repetitions = serializers.IntegerField()
+    sets = serializers.IntegerField()
+    duration = serializers.IntegerField()
+    distance = serializers.IntegerField()
 
-    # class Meta:
-        # fields = ['workout_plan', '']
 
     def validate(self, data):
         '''
@@ -25,17 +30,7 @@ class WorkoutSerializer(serializers.Serializer):
             raise ValueError('This workout is already added to the plan!')
 
         return data
-    
 
-
-    #  workout_plan = models.ForeignKey(WorkoutPlans, on_delete = models.CASCADE)
-    # user = models.ForeignKey(User, on_delete = models.CASCADE)
-    # excercise = models.ForeignKey(DefinedWorkouts, on_delete = models.CASCADE)
-    # frequency = models.IntegerField(null = True) # This must be a WorkoutPlans field
-    # repetitions = models.IntegerField(null = True)
-    # sets = models.IntegerField(null = True)
-    # duration = models.IntegerField(null = True)
-    # distance = models.IntegerField(null = True)
 
 class PlanSerializer(serializers.ModelSerializer):
     '''
