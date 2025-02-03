@@ -12,6 +12,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import ValidationError
 from account_auth.authenticate import IsTokenValid
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 class CreateWorkoutPlan(APIView):
     '''
@@ -23,6 +25,7 @@ class CreateWorkoutPlan(APIView):
     '''
     permission_classes = [IsAuthenticated, IsTokenValid]
     
+    @swagger_auto_schema(request_body = PlanSerializer)
     def post(self, request):
         serializer = PlanSerializer(data = request.data)
         serializer.is_valid(raise_exception = True)
@@ -40,6 +43,7 @@ class AddWorkoutExcercise(APIView):
     '''
     permission_classes = [IsAuthenticated, IsTokenValid]
 
+    @swagger_auto_schema(request_body = WorkoutSerializer)
     def post(self, request):
         '''
             Additional validation will be implemented in the serializer. For now, it isn't checked
@@ -71,6 +75,15 @@ class CustomizeWorkoutExcercise(APIView):
     '''
     permission_classes = [IsAuthenticated, IsTokenValid]
 
+    @swagger_auto_schema(request_body = openapi.Schema(
+                type = openapi.TYPE_OBJECT,
+                required = ['target_plan', 'target_excercise'],
+                properties = {
+                    'target_plan': openapi.Schema(type = openapi.TYPE_STRING, description = 'Name'),
+                    'target_excercise': openapi.Schema(type = openapi.TYPE_STRING, description = 'Description'),
+                    'target_fields' : openapi.Schema(type = openapi.TYPE_STRING, description = 'Any of the fields that you wish to update!')
+                }
+            ))
     def post(self, request):
         '''
             Considering that each plan will have a single instance of a workout, 
