@@ -10,7 +10,7 @@ class WorkoutPlans(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     plan_name = models.CharField(max_length = 150)
     plan_type = models.CharField(max_length = 50)
-    daily_session = models.IntegerField(null = True)
+    daily_session_duration = models.IntegerField(null = True)
 
 class WorkoutInstances(models.Model):
     '''

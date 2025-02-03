@@ -29,7 +29,7 @@ class CreateWorkoutPlan(APIView):
         validated = serializer.validated_data
         name = validated.get('plan_name')
         WorkoutPlans.objects.create(user = request.user, plan_name = validated.get('plan_name'),
-                                    plan_type = validated.get('plan_type'), daily_session = validated.get('daily_session'))
+                                    plan_type = validated.get('plan_type'), daily_session_duration = validated.get('daily_session'))
         return Response({'message' : f'successfully created plan: {name}'})
     
 class AddWorkoutExcercise(APIView):
@@ -55,6 +55,8 @@ class AddWorkoutExcercise(APIView):
         if not plan:
             return Response({'message' : f'Plan {plan_name} doesnt exist!'})
         else:
+            already_exists = bool(WorkoutInstances.objects.filter(user = request.user).
+                                  filter(workout_plan = plan).filter(excercise = chosen_excercise))
             WorkoutInstances.objects.create(user = request.user, workout_plan = plan, excercise = chosen_excercise,
                                             frequency = request.data.get('frequency'), repetitions = request.data.get('repetitions'),
                                             sets = request.data.get('sets'), duration = request.data.get('duration'),
@@ -81,7 +83,8 @@ class CustomizeWorkoutExcercise(APIView):
         data = request.data
         target_excercise = DefinedWorkouts.objects.get(workout_name = data.get('target_excercise'))
         try:
-            curr_instances = WorkoutInstances.objects.filter(user = request.user)
+            target_plan = WorkoutPlans.objects.get(plan_name = data.get('target_plan'))
+            curr_instances = WorkoutInstances.objects.filter(user = request.user).filter(workout_plan = target_plan)
             target = curr_instances.get(excercise = target_excercise)    
             model_keys = [i.name for i in WorkoutInstances._meta.fields]
             for param in data:

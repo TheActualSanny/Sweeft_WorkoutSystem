@@ -18,11 +18,25 @@ class WorkoutSerializer(serializers.Serializer):
         '''
 
         excercise_name = data['excercise']
-        if not DefinedWorkouts.objects.filter(workout_name = excercise_name):
+        defined = DefinedWorkouts.objects.filter(workout_name = excercise_name)
+        if not defined:
             raise ValueError('This excercise is not defined!')
+        elif WorkoutInstances.objects.filter(excercise = defined):
+            raise ValueError('This workout is already added to the plan!')
+
         return data
     
-        
+
+
+    #  workout_plan = models.ForeignKey(WorkoutPlans, on_delete = models.CASCADE)
+    # user = models.ForeignKey(User, on_delete = models.CASCADE)
+    # excercise = models.ForeignKey(DefinedWorkouts, on_delete = models.CASCADE)
+    # frequency = models.IntegerField(null = True) # This must be a WorkoutPlans field
+    # repetitions = models.IntegerField(null = True)
+    # sets = models.IntegerField(null = True)
+    # duration = models.IntegerField(null = True)
+    # distance = models.IntegerField(null = True)
+
 class PlanSerializer(serializers.ModelSerializer):
     '''
         The serializer that we will use in order to validate
@@ -31,7 +45,7 @@ class PlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkoutPlans
-        fields = ['plan_name', 'plan_type', 'daily_session']
+        fields = ['plan_name', 'plan_type', 'daily_session_duration']
 
     def validate(self, data):
         '''
