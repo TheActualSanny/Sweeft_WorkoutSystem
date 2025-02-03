@@ -8,13 +8,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         Instance of this serializer class will be used whenever the user registers
         a new account, the main purpose of this class is to serve as a validator.
     '''
-    password_confirm = serializers.CharField()
+    password_confirm = serializers.CharField(write_only = True)
     class Meta:
         model = User
         fields = ['username', 'password', 'password_confirm']
         extra_kwargs = {
-            'password' : {'write_only' : True, 'min_length' : 4},
-            'password_confirm' : {'write_only' : True}
+            'password' : {'min_length' : 4}
         }
 
     def validate(self, data):
@@ -33,5 +32,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             The implementation will be written here, for now the password will be stored as a string
         '''
 
-
-
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+    
