@@ -1,15 +1,17 @@
 from django.shortcuts import render, HttpResponse, redirect
 from .models import DefinedWorkouts
 from .serializers import HomePageSerializer
+from rest_framework.views import APIView
 from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
+from account_auth.authenticate import IsTokenValid
 from rest_framework_simplejwt.authentication import JWTAuthentication
 # Views that make up the main website will be implemented here.
 
-class HomePageAPI(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+class HomePageAPI(APIView):
+    permission_classes = [IsAuthenticated, IsTokenValid]
 
     def get(self, request):
         '''
