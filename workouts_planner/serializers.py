@@ -9,11 +9,11 @@ class WorkoutSerializer(serializers.Serializer):
     '''
     plan_name = serializers.CharField() 
     excercise = serializers.CharField()
-    frequency = serializers.IntegerField()
-    repetitions = serializers.IntegerField()
-    sets = serializers.IntegerField()
-    duration = serializers.IntegerField()
-    distance = serializers.IntegerField()
+    frequency = serializers.IntegerField(required = False, allow_null = True)
+    repetitions = serializers.IntegerField(required = False, allow_null = True)
+    sets = serializers.IntegerField(required = False, allow_null = True)
+    duration = serializers.IntegerField(required = False, allow_null = True)
+    distance = serializers.IntegerField(required = False, allow_null = True)
 
 
     def validate(self, data):
@@ -21,14 +21,15 @@ class WorkoutSerializer(serializers.Serializer):
             The main purpose of this is to check whether or not
             the workout with the passed name is actually defined in the PredefinedWorkouts
         '''
-
+        target_plan = data['plan_name']
         excercise_name = data['excercise']
         defined = DefinedWorkouts.objects.filter(workout_name = excercise_name)
+
+        plan = WorkoutPlans.objects.filter(plan_name = target_plan)
+        if not plan:
+            raise ValueError('The plan that you passed does not exist!')
         if not defined:
             raise ValueError('This excercise is not defined!')
-        elif WorkoutInstances.objects.filter(excercise = defined):
-            raise ValueError('This workout is already added to the plan!')
-
         return data
 
 

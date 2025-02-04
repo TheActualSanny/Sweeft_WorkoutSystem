@@ -79,11 +79,13 @@ class CustomizeWorkoutExcercise(APIView):
                 type = openapi.TYPE_OBJECT,
                 required = ['target_plan', 'target_excercise'],
                 properties = {
-                    'target_plan': openapi.Schema(type = openapi.TYPE_STRING, description = 'Name'),
-                    'target_excercise': openapi.Schema(type = openapi.TYPE_STRING, description = 'Description'),
-                    'target_fields' : openapi.Schema(type = openapi.TYPE_STRING, description = 'Any of the fields that you wish to update!')
-                }
+                    'plan_name': openapi.Schema(type = openapi.TYPE_STRING, description = 'The plan which the excerise is added to'),
+                    'excercise': openapi.Schema(type = openapi.TYPE_STRING, description = 'The excercise itself'),
+                    'target_fields' : openapi.Schema(type = openapi.TYPE_STRING, description = '''Optional: pass any of the fields
+                    and values that you wish to update them to as kwargs.''')
+                },
             ))
+
     def post(self, request):
         '''
             Considering that each plan will have a single instance of a workout, 
@@ -93,20 +95,22 @@ class CustomizeWorkoutExcercise(APIView):
             This implementation makes it possible for the user to pass in any ammount of JSON key-value pairs
             to modify the target excercise.
         '''
-        data = request.data
-        target_excercise = DefinedWorkouts.objects.get(workout_name = data.get('target_excercise'))
-        try:
-            target_plan = WorkoutPlans.objects.get(plan_name = data.get('target_plan'))
-            curr_instances = WorkoutInstances.objects.filter(user = request.user).filter(workout_plan = target_plan)
+        
+        serializer = WorkoutSerializer(data = request.data)
+        if serializer.is_valid(raise_exception = True):
+            plan = WorkoutPlans.objects.get(plan_name = serializer.validated_data.get('plan_name'))
+            target_excercise = DefinedWorkouts.objects.get(workout_name = serializer.validated_data.get('excercise'))
+            curr_instances = WorkoutInstances.objects.filter(user = request.user).filter(workout_plan = plan)
             target = curr_instances.get(excercise = target_excercise)    
             model_keys = [i.name for i in WorkoutInstances._meta.fields]
+            data = {field_name : serializer.validated_data.get(field_name) for field_name, field in serializer.fields.items() if not field.required}
             for param in data:
                 if param in model_keys:
                     setattr(target, param, data[param])
             target.save()
             return Response({'message' : 'Successfully updated the excercise!'})
-        except Exception as err:
-            return Response({'message' : 'The workout that you passed doesnt exist, or you are unathorized'})
+        else:
+            return Response({'message' : 'Check the input fields'})
         
 
         
