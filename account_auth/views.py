@@ -19,6 +19,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 
 class RegisterAPI(APIView):
+
     permission_classes = [AllowAny]
 
     @swagger_auto_schema(
@@ -27,9 +28,10 @@ class RegisterAPI(APIView):
     )
     def post(self, request):
         '''
-            This will create a new user instance and will call the "/api/token/" endpoint in order to get
-            the access/refresh tokens for the user. As a response, this will return the access token
-            for the user.
+        This view will allow the user to register a new account.
+        For now, an account only has username and password fields.
+        If the request had valid parameters, the username and password and returned as well as an access token,
+        which is essential for the user to access any of the other endpoints.
         '''
 
         serializer = UserRegisterSerializer(data = request.data)

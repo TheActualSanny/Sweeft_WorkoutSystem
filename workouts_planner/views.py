@@ -17,11 +17,10 @@ from drf_yasg.utils import swagger_auto_schema
 
 class CreateWorkoutPlan(APIView):
     '''
-        View managing the insertion of new excercises into the workout plans.
-        Considering that each workout plan will have a name, even if it is the
-        first record inside the database, the user just sets the desired workout_name.
-        There will be a seperate view which will return a single workout plan based
-        on the workout name that the user inputs.
+        View managing for creating workout plans.
+        Each record will have a foreign key which will connect it to the current user.
+        The actual excercises however are stored in a seperate WorkoutInstances model,
+        and each workout will have 3 foreign keys: User, Plan and Defined Workout
     '''
     permission_classes = [IsAuthenticated, IsTokenValid]
     
@@ -90,10 +89,9 @@ class CustomizeWorkoutExcercise(APIView):
         '''
             Considering that each plan will have a single instance of a workout, 
             we simply get that workout excercise.
-            It will then parse the request.data and update passed values
-
-            This implementation makes it possible for the user to pass in any ammount of JSON key-value pairs
-            to modify the target excercise.
+            It will then parse the request.data and update the existing fields with the passed values.
+            This implementation is dynamic, meaning that it makes it possible for the user to pass in any ammount of JSON key-value 
+            pairs to modify the target excercise.
         '''
         
         serializer = WorkoutSerializer(data = request.data)
