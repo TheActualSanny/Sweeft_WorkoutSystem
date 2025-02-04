@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('workouts_main', '0003_auto_20250201_1732'),
+        ('workouts_main', '0002_auto_20250131_2335'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

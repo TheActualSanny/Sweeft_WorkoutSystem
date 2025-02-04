@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('tracking', '0001_initial'),
-        ('workouts_main', '0003_auto_20250201_1732'),
+        ('workouts_main', '0002_auto_20250131_2335'),
     ]
 
     operations = [
