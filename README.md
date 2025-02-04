@@ -35,7 +35,21 @@ Install these modules by running:
 pip install -r requirements.txt
 ~~~
 
-3. ### Running the initial migrations
+3. ### .env
+The only enviromental variable that is needed is the __secret_key__ variable.
+To generate a secret key, run
+
+~~~python
+from django.core.management.utils import get_random_secret_key  
+get_random_secret_key()
+~~~
+In the interactive shell or a code editor, copy the value and set:
+
+~~~python
+secret_key = 'your_key'
+~~~
+
+5. ### Running the initial migrations
 The migrations which are essential to set up the necessary models in the project are all commited to the repository.
 In order for the API to function correctly, run the migrations:
 ~~~shell
@@ -43,7 +57,7 @@ python manage.py migrate
 ~~~
 This will not only set up the models, but it will also __populate the DefinedWorkouts table with the initial 20 excercises__.
 
-4. ### The API setup
+5. ### The API setup
 After running the commands, the API should be ready to go.
 To test the endpoints, run the server:
 ~~~shell
